@@ -1,0 +1,36 @@
+name: update-linpeas
+
+on:
+  schedule:
+    - cron: '0 3 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-linpeas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download latest linpeas.sh
+        run: |
+          LATEST=$(gh release list --repo carlospolop/PEASS-ng --limit 1 --json tagName --jq '.[0].tagName')
+          gh release download "$LATEST" --repo carlospolop/PEASS-ng --pattern 'linpeas.sh' --clobber
+          test -s linpeas.sh && head -1 linpeas.sh | grep -q '^#' || { echo "download failed"; exit 1; }
+          chmod +x linpeas.sh
+          echo "synced to $LATEST"
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet linpeas.sh; then
+            echo "linpeas.sh already up to date"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add linpeas.sh
+            git commit -m "chore: sync linpeas.sh to latest PEASS-ng"
+            git push
+          fi

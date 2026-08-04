@@ -1,0 +1,14 @@
+# build artifacts
+exploit
+exploit-passwd
+vulnerable
+payload
+payload.o
+vulnerable
+*.o
+.musl-shim/
+
+# editor / OS detritus
+*.swp
+*.swo
+.DS_Store

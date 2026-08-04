@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you reference this exploit port in a paper, advisory, or writeup, please cite it as below."
+title: copy-fail-c
+abstract: "Cross-platform C reimplementation of the Copy Fail Linux LPE (CVE-2026-31431). Demonstrates that the same exploit can be expressed as portable C compilable to any architecture nolibc supports, with no per-arch hex blobs or inline assembly."
+type: software
+authors:
+  - family-names: Gies
+    given-names: Tony
+    email: tony.gies@crashunited.com
+    affiliation: "Crash United, LLC"
+repository-code: "https://github.com/tgies/copy-fail-c"
+license:
+  - LGPL-2.1-or-later
+  - MIT
+keywords:
+  - CVE-2026-31431
+  - exploit
+  - linux-kernel
+  - local-privilege-escalation
+  - af_alg
+  - splice
+  - page-cache
+  - nolibc
+references:
+  - type: report
+    title: "Copy Fail (CVE-2026-31431) disclosure"
+    authors:
+      - name: "Theori"
+      - name: "Xint"
+    url: "https://copy.fail/"
+    notes: "Original discovery and public disclosure."

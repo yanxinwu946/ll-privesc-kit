@@ -1,0 +1,109 @@
+name: build
+
+on:
+  push:
+    branches: ['main', 'master']
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-gnu:
+    name: build (glibc)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential libfuse-dev libcap-dev zip
+
+      - name: Build all exploits (glibc static)
+        run: ./build/build.sh gnu dist/gnu
+
+      - name: Smoke test (file type)
+        run: |
+          find dist/gnu -type f -exec file {} \; 2>/dev/null | sed 's/, BuildID[^,]*//' || true
+
+      - name: Upload artifacts (gnu)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-gnu
+          path: dist/gnu
+          if-no-files-found: error
+
+  build-musl:
+    name: build (musl, alpine)
+    runs-on: ubuntu-latest
+    container:
+      image: alpine:3.20
+    steps:
+      - name: Install toolchain in container
+        run: |
+          apk add --no-cache \
+            build-base fuse-dev fuse-static libcap-dev linux-headers \
+            git nodejs zip bash
+
+      - name: Prepare musl toolchain shims
+        run: |
+          # alpine gcc is already musl; copy-fail-c Makefile hardcodes musl-gcc
+          ln -sf "$(command -v gcc)" /usr/local/bin/musl-gcc
+          # copy-fail-c Makefile expects Debian-style UAPI path /usr/include/<arch>-linux-gnu/asm
+          mkdir -p /usr/include/x86_64-linux-gnu
+          ln -sfn /usr/include/asm /usr/include/x86_64-linux-gnu/asm
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build all exploits (musl static)
+        run: ./build/build.sh musl dist/musl
+
+      - name: Upload artifacts (musl)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-musl
+          path: dist/musl
+          if-no-files-found: error
+
+  release:
+    name: Package & Release
+    needs: [build-gnu, build-musl]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Assemble zips
+        run: |
+          set -euxo pipefail
+          for VARIANT in gnu musl; do
+            PKG="dist/ll-privesc-kit-$VARIANT"
+            mkdir -p "$PKG"
+            cp -r "artifacts/dist-$VARIANT"/* "$PKG/"
+            find "$PKG" -type f -name '*.o' -delete
+            cd dist && zip -r "../ll-privesc-kit-$VARIANT.zip" "ll-privesc-kit-$VARIANT"
+            cd ..
+          done
+          echo "ZIP_GNU=ll-privesc-kit-gnu.zip" >> "$GITHUB_ENV"
+          echo "ZIP_MUSL=ll-privesc-kit-musl.zip" >> "$GITHUB_ENV"
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ll-privesc-kit-gnu.zip
+            ll-privesc-kit-musl.zip
+          generate_release_notes: true

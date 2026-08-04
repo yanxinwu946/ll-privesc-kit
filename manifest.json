@@ -1,0 +1,145 @@
+{
+  "$schema": "https://raw.githubusercontent.com/ll-privesc-kit/ll-privesc-kit/main/manifest.schema.json",
+  "name": "ll-privesc-kit",
+  "description": "Linux 本地提权漏洞 PoC 合集（按漏洞时间排序，官方源码 + gnu/musl 静态 CI 产物）",
+  "license": "MIT",
+  "repo": "https://github.com/yanxinwu946/ll-privesc-kit",
+  "build": {
+    "contract": "NNname/build.sh <outdir> [gnu|musl]",
+    "orchestrator": "./build/build.sh [gnu|musl] [outdir]",
+    "ci": ".github/workflows/build.yml",
+    "variants": ["gnu", "musl"]
+  },
+  "exploits": [
+    {
+      "id": "01dirtycow",
+      "cve": "CVE-2016-5195",
+      "name": "Dirty COW",
+      "type": "kernel race",
+      "published": "2016-10",
+      "kernel_range": "2.6.22 ~ 4.8.3",
+      "build": "c",
+      "upstream": "https://github.com/dirtycow/dirtycow.github.io"
+    },
+    {
+      "id": "02sudo-samedit",
+      "cve": "CVE-2021-3156",
+      "name": "sudo Baron Samedit",
+      "type": "heap overflow",
+      "published": "2021-01",
+      "kernel_range": "sudo 1.8.2 ~ 1.9.5p1",
+      "build": "python",
+      "upstream": "https://github.com/blasty/CVE-2021-3156"
+    },
+    {
+      "id": "03pwnkit",
+      "cve": "CVE-2021-4034",
+      "name": "PwnKit (polkit pkexec)",
+      "type": "OOB write",
+      "published": "2022-01",
+      "kernel_range": "polkit pkexec (2009~2022)",
+      "build": "c-make",
+      "upstream": "https://github.com/blasty/CVE-2021-4034"
+    },
+    {
+      "id": "04dirtypipe",
+      "cve": "CVE-2022-0847",
+      "name": "Dirty Pipe",
+      "type": "kernel file write",
+      "published": "2022-03",
+      "kernel_range": "5.8 ~ 5.16.11",
+      "build": "c",
+      "upstream": "https://github.com/Arinerron/CVE-2022-0847-DirtyPipe-Exploit"
+    },
+    {
+      "id": "05overlayfs",
+      "cve": "CVE-2023-0386",
+      "name": "OverlayFS copy-up",
+      "type": "overlayfs capability",
+      "published": "2023-01",
+      "kernel_range": "5.11 ~ 6.2",
+      "build": "c-make",
+      "upstream": "https://github.com/xkaneiki/CVE-2023-0386"
+    },
+    {
+      "id": "06chwoot",
+      "cve": "CVE-2025-32463",
+      "name": "sudo -R chroot escape",
+      "type": "chroot escape / NSS",
+      "published": "2025-04",
+      "kernel_range": "sudo 1.9.9p1 ~ 1.9.16",
+      "build": "shell",
+      "upstream": "https://github.com/richmirch/CVE-2025-32463-Sudo-Root-Escalation"
+    },
+    {
+      "id": "07pack2theroot",
+      "cve": "CVE-2026-41651",
+      "name": "PackageKit TOCTOU",
+      "type": "dbus toctou",
+      "published": "2026-04",
+      "kernel_range": "PackageKit < 1.3.5",
+      "build": "python",
+      "upstream": "https://github.com/PackageKit/PackageKit/security/advisories/GHSA-f55j-vvr9-69xv"
+    },
+    {
+      "id": "08copyfail",
+      "cve": "CVE-2026-31431",
+      "name": "Copy Fail (AF_ALG page-cache write)",
+      "type": "kernel page-cache write",
+      "published": "2026-04",
+      "kernel_range": "AF_ALG authencesn (all kernels)",
+      "build": "c-make",
+      "upstream": "https://github.com/tgies/copy-fail-c"
+    },
+    {
+      "id": "09dirtyfrag",
+      "cve": "CVE-2026-43284 / CVE-2026-43500",
+      "name": "Dirty Frag (xfrm-ESP + RxRPC)",
+      "type": "kernel page-cache corruption",
+      "published": "2026-05",
+      "kernel_range": "xfrm-ESP: 4.9~6.17; RxRPC: 5.19~6.17",
+      "build": "c",
+      "upstream": "https://github.com/V4bel/dirtyfrag"
+    },
+    {
+      "id": "10fragnesia",
+      "cve": "CVE-2026-46300",
+      "name": "Fragnesia (ESP-in-TCP)",
+      "type": "kernel page-cache corruption",
+      "published": "2026-05",
+      "kernel_range": "Dirty Frag affected kernels (~2026-05-13)",
+      "build": "c",
+      "upstream": "https://github.com/v12-security/pocs"
+    },
+    {
+      "id": "11dirty-clone",
+      "cve": "CVE-2026-43503",
+      "name": "Dirty Clone",
+      "type": "kernel page-cache corruption",
+      "published": "2026-05",
+      "kernel_range": "Linux 5.16+ (userns)",
+      "build": "python",
+      "upstream": ""
+    },
+    {
+      "id": "12pedit-cow",
+      "cve": "CVE-2026-46331",
+      "name": "act_pedit partial COW",
+      "type": "kernel page-cache corruption",
+      "published": "2026-06",
+      "kernel_range": "5.18 ~ 7.1-rc6",
+      "build": "c-make",
+      "upstream": "https://github.com/yanxinwu946/CVE-2026-46331"
+    },
+    {
+      "id": "13ovswrap",
+      "cve": "CVE-2026-64531",
+      "name": "OVSwrap",
+      "type": "netlink attr overflow",
+      "published": "2026-07",
+      "kernel_range": "Open vSwitch (ovsdb-server)",
+      "build": "mixed",
+      "upstream": "https://github.com/manizada/OVSwrap"
+    }
+  ]
+}
