@@ -1,14 +1,19 @@
 dist/
 build/dist/
+test-release/
+test-release-dl/
 
 03pwnkit/CVE-2021-4034/cve-2021-4034
 03pwnkit/CVE-2021-4034/pwnkit.so
 03pwnkit/CVE-2021-4034/gconv-modules
 03pwnkit/CVE-2021-4034/GCONV_PATH=./
 03pwnkit/CVE-2021-4034/dry-run/dry-run
+02sudo-samedit/CVE-2021-3156/sudo-hax-me-a-sandwich
+02sudo-samedit/CVE-2021-3156/libnss_X
 07overlayfs/CVE-2023-0386/fuse
 07overlayfs/CVE-2023-0386/exp
 07overlayfs/CVE-2023-0386/gc
+07pack2theroot/cve-2026-41651
 09copyfail/copy-fail-c/payload
 09copyfail/copy-fail-c/payload.o
 09copyfail/copy-fail-c/exploit
@@ -17,8 +22,13 @@ build/dist/
 09copyfail/copy-fail-c/utils.o
 09copyfail/copy-fail-c/musl-shim
 09copyfail/copy-fail-c/shim.o
+11dirty-clone/dirtyclone
 13packet-edit-meme/CVE-2026-46331/packet_edit_meme
 13packet-edit-meme/CVE-2026-46331/*.o
+10fragnesia/fragnesia
+12pedit-cow/CVE-2026-46331/packet_edit_meme
+12pedit-cow/CVE-2026-46331/*.o
+04dirtypipe/exploit
 
 *.o
 *.a

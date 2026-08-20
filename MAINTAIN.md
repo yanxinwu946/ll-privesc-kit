@@ -1,75 +1,82 @@
-# Maintainer Guide
+# ll-privesc-kit 维护指南
 
-## 新增漏洞流程
+## 编译规则
 
-### 1. 确定序号
+### 静态链接（必须）
 
-按 CVE **公开时间**插入到正确位置。当前列表见 `README.md`。
+所有 C 编译产物必须使用 `-static` 静态链接，确保在任意目标机器上无需依赖即可运行。
 
-插入后，其后的目录序号全部 +1，并同步更新所有引用。
+**规则：**
+- Makefile 中必须包含 `-static` 标志
+- build.sh 中直接调用 gcc 时必须包含 `-static`
+- `.so` 共享库（如 pwnkit.so）例外，它们必须是动态链接的
 
-### 2. 创建目录
+**示例：**
 
+Makefile:
+```makefile
+CC ?= gcc
+CFLAGS = -Wall -O2 -static
+
+all:
+	$(CC) $(CFLAGS) exploit.c -o exploit
 ```
-NNname/           # NN=两位数序号，name=小写短横线短名称
-├── README.md     # 见下方模板
-├── build.sh      # 见下方契约
-└── ...           # 上游 PoC 源码（不改动）
-```
 
-### 3. README.md 模板
-
-```markdown
-# NNname — CVE-XXXX-XXXXX 名称
-
-> 一句话描述。
-
-| 项 | 值 |
-|---|---|
-| CVE | CVE-XXXX-XXXXX |
-| 漏洞类型 | 类型 |
-| 影响版本 | 范围 |
-| 公开时间 | YYYY-MM |
-| 官方上游 | [作者/仓库](链接) |
-| 源码类型 | C / Python / Shell |
-
-## 目录结构
-| 文件 | 说明 |
-|---|---|
-| `xxx/exp.c` | 利用源码 |
-
-## 编译
+build.sh:
 ```bash
-./build.sh <outdir> [gnu|musl]
+${CC:-gcc} -static -O2 -o "$OUT/exploit" exploit.c
 ```
 
-## 用法
-```bash
-./exp
+### 编译器变量
+
+所有 Makefile 必须使用 `$(CC)` 变量，允许通过 `CC=...` 覆盖编译器（如 musl 交叉编译）。
+
+```makefile
+CC ?= gcc
 ```
 
-## 上游参考
-- [CVE 详情](https://nvd.nist.gov/vuln/detail/CVE-XXXX-XXXXX)
+### Release zip 结构
+
+Release zip 包含：
+- 编译好的二进制文件（直接在 `0x` 目录下）
+- 预编译工具（`tools/` 目录）
+
+源码不包含在 zip 中，请从 GitHub 仓库获取。
+
+```
+ll-privesc-kit-gnu/
+  01dirtycow/
+    dirtyc0w          # 编译产物
+  02sudo-samedit/
+    sudo-hax-me-a-sandwich  # 编译产物
+    ...
+  tools/
+    bash-static
+    busybox
+    socat
+    strace
+    pspy64
+    ...
 ```
 
-### 4. build.sh 契约
+## CI 流程
 
-```
-build.sh <outdir> [gnu|musl]
-```
+### 构建
 
-- 产物必须落入 `$OUT/`
-- 全局 `$CC` 可能被覆盖（musl 场景用 musl-gcc）
-- Python/Shell 直接 `cp -f`
+1. `build/build.sh gnu dist/gnu` — glibc 静态编译
+2. `build/build.sh musl dist/musl` — musl 静态编译
 
-### 5. 更新清单
+### 发布
 
-- `manifest.json`：`exploits` 数组按序号插入
-- `README.md`：漏洞列表表格插入新行
-- 所有被影响的目录 README.md 中的序号也要更新
+1. 打 tag `v*` 触发 CI
+2. CI 自动编译 glibc 和 musl 版本
+3. 自动发布 Release 并上传 zip
 
-## 原则
+## 新增 Exploit
 
-- **不改动上游 PoC 源码**
-- 不提交 `.o` / 二进制到 git
-- 新增前确认 CVE 编号和公开时间准确
+1. 创建 `NNname/` 目录（NN 为两位数字）
+2. 提供 `build.sh <outdir> [gnu|musl]`
+3. C 代码必须使用 `-static` 编译
+4. build.sh 只负责编译，产物放到 `$OUT/`
+5. 更新 `manifest.json`
+6. 更新 `README.md`

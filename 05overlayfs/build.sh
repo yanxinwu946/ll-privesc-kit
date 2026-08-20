@@ -6,6 +6,6 @@ set -euo pipefail
 OUT="${1:?usage: build.sh <outdir> [gnu|musl]}"
 cd "$(dirname "$0")/CVE-2023-0386"
 mkdir -p "$OUT"
-make all
+make all CC="${CC:-gcc}"
 cp -f fuse exp gc "$OUT/"
 echo "[05overlayfs] -> $OUT/{fuse,exp,gc}"

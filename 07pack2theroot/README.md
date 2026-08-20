@@ -8,24 +8,33 @@
 | 漏洞类型 | D-Bus TOCTOU 竞态 |
 | 影响版本 | PackageKit < 1.3.5 |
 | 公开时间 | 2026 |
-| 源码类型 | Python（python3-gi） |
+| 源码类型 | Python + C 混合 |
 
 ## 目录结构
 | 文件 | 说明 |
 |---|---|
 | `cve_2026_41651.py` | 利用脚本（dpkg-deb / rpmbuild 双方案） |
+| `cve-2026-41651.c` | C 版本利用（独立实现，无 glib 依赖） |
+| `Makefile` | C 代码编译脚本 |
 
 ## 编译
-无需编译，`build.sh` 直接拷贝：
 ```bash
+# Python 方案无需编译
+# C 方案需要编译（build.sh 会自动处理）
 ./build.sh <outdir> [gnu|musl]
+
+# 或手动编译 C 代码
+make
 ```
 
 ## 用法
 ```bash
-# 依赖: python3-gi（GObject introspection）
+# Python 方案
 python3 cve_2026_41651.py
 # Debian/Ubuntu 用 dpkg-deb；RHEL/Fedora/SUSE 用 rpmbuild
+
+# C 方案（无额外依赖，仅需 libc）
+./cve-2026-41651
 ```
 
 ## 恢复/清理
@@ -33,3 +42,4 @@ python3 cve_2026_41651.py
 
 ## 上游参考
 - [CVE 详情](https://nvd.nist.gov/vuln/detail/CVE-2026-41651)
+- [sick-pwn 实现](https://afflicted.sh)

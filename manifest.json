@@ -28,7 +28,7 @@
       "type": "heap overflow",
       "published": "2021-01",
       "kernel_range": "sudo 1.8.2 ~ 1.9.5p1",
-      "build": "python",
+      "build": "mixed",
       "upstream": "https://github.com/blasty/CVE-2021-3156"
     },
     {
@@ -78,8 +78,8 @@
       "type": "dbus toctou",
       "published": "2026-04",
       "kernel_range": "PackageKit < 1.3.5",
-      "build": "python",
-      "upstream": "https://github.com/PackageKit/PackageKit/security/advisories/GHSA-f55j-vvr9-69xv"
+      "build": "mixed",
+      "upstream": "https://github.com/Vozec/CVE-2026-41651"
     },
     {
       "id": "08copyfail",
@@ -118,8 +118,8 @@
       "type": "kernel page-cache corruption",
       "published": "2026-05",
       "kernel_range": "Linux 5.16+ (userns)",
-      "build": "python",
-      "upstream": ""
+      "build": "mixed",
+      "upstream": "https://github.com/0xBlackash/CVE-2026-43503"
     },
     {
       "id": "12pedit-cow",

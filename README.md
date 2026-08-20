@@ -24,8 +24,8 @@ Linux Privilege Escalation Arsenal
 在 [Releases](https://github.com/yanxinwu946/ll-privesc-kit/releases) 下载对应版本：
 
 ```
-ll-privesc-kit-gnu-v1.0.0.zip    glibc 静态编译（通用兼容）
-ll-privesc-kit-musl-v1.0.0.zip   musl 静态编译（跨发行版兼容性最佳）
+ll-privesc-kit-gnu.zip     glibc 静态编译（x86_64，适配 Debian/Ubuntu/CentOS 等 glibc 系）
+ll-privesc-kit-musl.zip    musl 静态编译（x86_64，适配 Alpine/Artix 等 musl 系）
 ```
 
 Release zip 仅包含编译产物与内置工具，不包含 PoC 源码。如需源码请克隆仓库。
