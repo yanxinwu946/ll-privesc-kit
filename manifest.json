@@ -140,6 +140,16 @@
       "kernel_range": "Open vSwitch (ovsdb-server)",
       "build": "mixed",
       "upstream": "https://github.com/manizada/OVSwrap"
+    },
+    {
+      "id": "14sctphantom",
+      "cve": "CVE-2026-64564",
+      "name": "SCTPhantom (SCTP ASCONF DEL-IP UAF)",
+      "type": "kernel use-after-free",
+      "published": "2026-08",
+      "kernel_range": "< 6.12.101, < 6.6.148 (SCTP ASCONF)",
+      "build": "c",
+      "upstream": "https://github.com/0xdeadroot/SCTPhantom-CVE-2026-64564"
     }
   ]
 }

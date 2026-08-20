@@ -62,6 +62,7 @@ ll-privesc-kit-gnu/
 | 11 | dirty-clone | CVE-2026-43503 |
 | 12 | pedit-cow | CVE-2026-46331 |
 | 13 | ovswrap | CVE-2026-64531 |
+| 14 | sctphantom | CVE-2026-64564 |
 
 每个目录的 README 含完整漏洞信息与用法。详细漏洞清单见 `manifest.json`。
 
