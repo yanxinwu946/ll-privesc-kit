@@ -6,7 +6,6 @@ OUT="${1:?usage: build.sh <outdir> [gnu|musl]}"
 cd "$(dirname "$0")/CVE-2021-3156"
 mkdir -p "$OUT"
 cp -f *.py "$OUT/"
-cp -f exploit_timestamp_race.c "$OUT/" 2>/dev/null || true
 make clean >/dev/null 2>&1 || true
 make CC="${CC:-gcc}"
 chmod +x sudo-hax-me-a-sandwich

@@ -1,13 +1,12 @@
 {
-  "$schema": "https://raw.githubusercontent.com/ll-privesc-kit/ll-privesc-kit/main/manifest.schema.json",
   "name": "ll-privesc-kit",
-  "description": "Linux 本地提权漏洞 PoC 合集（按漏洞时间排序，官方源码 + gnu/musl 静态 CI 产物）",
+  "description": "Linux 本地提权漏洞归档索引",
   "license": "MIT",
   "repo": "https://github.com/yanxinwu946/ll-privesc-kit",
   "build": {
-    "contract": "NNname/build.sh <outdir> [gnu|musl]",
-    "orchestrator": "./build/build.sh [gnu|musl] [outdir]",
-    "ci": ".github/workflows/build.yml",
+    "contract": "NNname/build.sh [outdir] [gnu|musl]",
+    "orchestrator": "build/build.sh [gnu|musl] [outdir]",
+    "sync": "build/sync-bin.sh [gnu|musl] [outdir]",
     "variants": ["gnu", "musl"]
   },
   "exploits": [
@@ -38,7 +37,7 @@
       "type": "OOB write",
       "published": "2022-01",
       "kernel_range": "polkit pkexec (2009~2022)",
-      "build": "c-make",
+      "build": "c",
       "upstream": "https://github.com/blasty/CVE-2021-4034"
     },
     {
@@ -58,7 +57,7 @@
       "type": "overlayfs capability",
       "published": "2023-01",
       "kernel_range": "5.11 ~ 6.2",
-      "build": "c-make",
+      "build": "c",
       "upstream": "https://github.com/xkaneiki/CVE-2023-0386"
     },
     {
@@ -88,7 +87,7 @@
       "type": "kernel page-cache write",
       "published": "2026-04",
       "kernel_range": "AF_ALG authencesn (all kernels)",
-      "build": "c-make",
+      "build": "c",
       "upstream": "https://github.com/tgies/copy-fail-c"
     },
     {
@@ -128,7 +127,7 @@
       "type": "kernel page-cache corruption",
       "published": "2026-06",
       "kernel_range": "5.18 ~ 7.1-rc6",
-      "build": "c-make",
+      "build": "c",
       "upstream": "https://github.com/yanxinwu946/CVE-2026-46331"
     },
     {
@@ -150,6 +149,66 @@
       "kernel_range": "< 6.12.101, < 6.6.148 (SCTP ASCONF)",
       "build": "c",
       "upstream": "https://github.com/0xdeadroot/SCTPhantom-CVE-2026-64564"
+    },
+    {
+      "id": "15infinitycore",
+      "cve": "CVE-2026-98260 / CVE-2026-98256 / CVE-2026-89754 / CVE-2026-80775 / CVE-2026-98385",
+      "name": "InfinityCore core-kernel LPEs",
+      "type": "kernel UAF / OOB write (core subsystems)",
+      "published": "2026-10",
+      "kernel_range": "5.7+ ~ 7.2.x (per CVE)",
+      "build": "c",
+      "upstream": "https://github.com/V4bel/InfinityCore"
+    },
+    {
+      "id": "16vghost",
+      "cve": "CVE-2026-74580",
+      "name": "Vghost (vhost stale IOTLB cache)",
+      "type": "kernel OOB read/write",
+      "published": "2026-10",
+      "kernel_range": "4.11 ~ 7.1.8 / 7.2-rc4",
+      "build": "c",
+      "upstream": "https://github.com/zhangutah/security-research"
+    },
+    {
+      "id": "17cve-2026-80521",
+      "cve": "CVE-2026-80521",
+      "name": "AF_UNIX SCC partial-free container escape",
+      "type": "kernel UAF / container escape",
+      "published": "2026-09",
+      "kernel_range": "Ubuntu 22.04/24.04/26.04, RHEL 10, Debian 12-14",
+      "build": "c",
+      "upstream": "https://github.com/markakd/Container_escape"
+    },
+    {
+      "id": "18cve-2026-52910",
+      "cve": "CVE-2026-52910",
+      "name": "reuseport cBPF UAF container escape",
+      "type": "kernel UAF / container escape",
+      "published": "2026-09",
+      "kernel_range": "4.5 ~ 6.12.x (Ubuntu 24.04 6.8.0-139 target)",
+      "build": "c",
+      "upstream": "https://github.com/markakd/Container_escape"
+    },
+    {
+      "id": "19lpe-quartet",
+      "cve": "CVE-2026-80844 / CVE-2026-81000 / CVE-2026-68121 / CVE-2026-74469",
+      "name": "DirtyAH6 / TUNderflow / PPPoEject / DiagSpill",
+      "type": "kernel memory corruption (net stack)",
+      "published": "2026-09",
+      "kernel_range": "2.6.12+ ~ 7.2.x (per CVE)",
+      "build": "python",
+      "upstream": "https://heyitsas.im/posts/lpe-quartet"
+    },
+    {
+      "id": "20ipv6-frag-escape",
+      "cve": "CVE-2026-53362",
+      "name": "IPv6 Frag Escape (fraggap)",
+      "type": "kernel OOB write / container escape",
+      "published": "2026-07",
+      "kernel_range": "6.1 ~ 6.12.94 (CONFIG_IPV6)",
+      "build": "cxx",
+      "upstream": "https://github.com/qwerty-po/security-research"
     }
   ]
 }

@@ -1,0 +1,14 @@
+name: 仓库问题
+description: 反馈文档、链接或清单检查的问题。
+body:
+  - type: input
+    id: location
+    attributes:
+      label: 文件路径或 Actions 运行链接
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题描述
+      description: 说明遇到的问题、预期结果和实际结果。
+    validations:
+      required: true

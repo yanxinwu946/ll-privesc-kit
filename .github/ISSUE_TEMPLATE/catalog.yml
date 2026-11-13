@@ -1,0 +1,21 @@
+name: 条目勘误
+description: 修正 CVE 编号、受影响范围、上游链接或清单映射。
+body:
+  - type: input
+    id: entry
+    attributes:
+      label: CVE 编号或条目路径
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: 建议修正
+      description: 说明现有记录哪里有误，以及应改成什么。
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: 原始来源
+      description: 可附厂商公告、发行版跟踪记录或上游文档。

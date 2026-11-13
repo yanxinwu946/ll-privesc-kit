@@ -1,0 +1,13 @@
+# 统一源码/脚本在仓库中的换行符，避免 Windows 检出后直接在 Linux 上执行失败。
+.gitattributes text eol=lf
+.gitignore text eol=lf
+LICENSE    text eol=lf
+*.sh   text eol=lf
+*.py   text eol=lf
+*.c    text eol=lf
+*.h    text eol=lf
+*.inc  text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf

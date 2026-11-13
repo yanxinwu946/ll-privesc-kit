@@ -21,9 +21,14 @@ case "$LIBC" in
   *) echo "用法: $0 [gnu|musl] [outdir]" >&2; exit 2 ;;
 esac
 
+case "$OUT" in
+  /*) OUTDIR="$OUT" ;;
+  *)  OUTDIR="$ROOT/$OUT" ;;
+esac
+
 echo "==> libc=$LIBC outdir=$OUT"
-rm -rf "$OUT"
-mkdir -p "$OUT"
+rm -rf "$OUTDIR"
+mkdir -p "$OUTDIR"
 
 FAIL=0
 for d in "$ROOT"/[0-9][0-9]*; do
@@ -32,7 +37,7 @@ for d in "$ROOT"/[0-9][0-9]*; do
   if [ -x "$d/build.sh" ]; then
     echo
     echo "===== [$name] ====="
-    if ( cd "$d" && ./build.sh "$ROOT/$OUT/$name" "$LIBC" ); then
+    if ( cd "$d" && ./build.sh "$OUTDIR/$name" "$LIBC" ); then
       echo "===== [$name] OK ====="
     else
       echo "===== [$name] FAILED =====" >&2
@@ -47,7 +52,7 @@ done
 if [ -d "$ROOT/tools" ]; then
   echo
   echo "===== [tools] ====="
-  cp -r "$ROOT/tools"/* "$OUT/" 2>/dev/null || true
+  cp -r "$ROOT/tools"/* "$OUTDIR/" 2>/dev/null || true
   echo "===== [tools] OK ====="
 fi
 
@@ -57,4 +62,4 @@ if [ "$FAIL" -ne 0 ]; then
   exit 1
 fi
 echo "[+] 全部构建完成 -> $OUT"
-echo "    产物: $(find "$OUT" -maxdepth 1 -type f | wc -l) 个文件 + tools/ 目录"
+echo "    产物: $(find "$OUTDIR" -type f | wc -l) 个文件"

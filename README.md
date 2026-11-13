@@ -1,91 +1,100 @@
 # ll-privesc-kit
 
-Linux Privilege Escalation Arsenal
+**Linux Privilege Escalation Arsenal**
 
-[![License](https://img.shields.io/badge/License-MIT-red?style=flat-square)](#)
-[![Platform](https://img.shields.io/badge/Platform-Linux-blue?style=flat-square)](#)
-[![Kernel](https://img.shields.io/badge/Kernel-2.6~7.x-purple?style=flat-square)](#)
-[![Language](https://img.shields.io/badge/C%20%7C%20Python%20%7C%20Bash-3776AB?style=flat-square)](#)
-[![CTF](https://img.shields.io/badge/CTF%20%7C%20Pentest%20%7C%20Red--Team-critical?style=flat-square)](#)
-[![CI](https://img.shields.io/badge/Build-gnu%20%7C%20musl%20static-brightgreen?style=flat-square)](#)
+[![清单检查](https://github.com/yanxinwu946/ll-privesc-kit/actions/workflows/check-catalog.yml/badge.svg?branch=main)](https://github.com/yanxinwu946/ll-privesc-kit/actions/workflows/check-catalog.yml)
+[![平台 Linux](https://img.shields.io/badge/Platform-Linux-2F6B9A?logo=linux&logoColor=white)](manifest.json)
+[![许可证 MIT](https://img.shields.io/badge/License-MIT-22863A)](LICENSE)
 
-收集 2016 ~ 2026 年杀伤范围最广的 Linux 本地提权漏洞 PoC，按公开时间排序。覆盖内核、sudo、polkit、glibc、PackageKit、Open vSwitch 等攻击面。
+面向授权安全测试、研究和 CTF 的 Linux 本地提权工具包。收录 2016 年至今影响面较大的 Linux 本地提权 PoC，以及常用的提权辅助工具。源码、预编译静态二进制和工具都直接随 Git 仓库维护，不依赖 Release。
 
-- 官方原版源码 - 采用各 CVE 最优上游仓库，不改动任何 PoC 代码
-- gnu / musl 静态编译 - CI 自动构建所有 C 漏洞的 glibc 与 musl 静态二进制
-- 纯净 zip 工具包 - 每个 Release 附带编译好的 gnu/musl 双变体二进制 + 内置工具
+## 快速开始
+
+完整克隆：
+
+```bash
+git clone https://github.com/yanxinwu946/ll-privesc-kit.git
+cd ll-privesc-kit
+```
+
+在 [`manifest.json`](manifest.json) 中搜索 CVE 编号或漏洞名称，`id` 对应条目目录。每个条目目录的 `README.md` 说明适用内核/版本、前置条件和用法；包含 ELF 产物的条目在 `bin/` 下附带 x86_64 静态二进制。
+
+```bash
+# 按 CVE 查找条目
+git grep -n -F 'CVE-2026-31431' -- manifest.json
+
+# 运行预编译产物（以 Copy Fail 为例；先阅读条目 README）
+./08copyfail/bin/exploit
+```
+
+纯 Python / Shell 条目（`06chwoot`、`19lpe-quartet`）没有 `bin/`，直接运行条目目录里的脚本。
+
+## 只下载 tools
+
+不需要完整仓库时，可以只取 [`tools/`](tools/)。
+
+### 稀疏检出
+
+```bash
+git clone --depth 1 --filter=blob:none --sparse \
+  https://github.com/yanxinwu946/ll-privesc-kit.git
+cd ll-privesc-kit
+git sparse-checkout set tools
+```
+
+### 单文件下载
+
+把 URL 里的文件名换成 `tools/` 中的目标文件：
+
+```bash
+curl -fLO https://raw.githubusercontent.com/yanxinwu946/ll-privesc-kit/main/tools/linpeas.sh
+chmod +x linpeas.sh
+```
+
+也可以在 GitHub 页面打开文件后点击 **Download raw file**。目标机器不能联网时，先在本地下载，再用 `scp`、`curl -T` 或靶场的文件上传点传上去。
+
+## tools 一览
+
+| 文件 | 用途 |
+|---|---|
+| `linpeas.sh` | LinPEAS 提权枚举 |
+| `llpeas.sh` | 精简枚举脚本（Safe OSCP 版） |
+| `pspy32` / `pspy64` / `pspy64s` | 无需 root 的进程监控；`pspy64s` 为静态版 |
+| `busybox` / `bash-static` / `socat` / `strace` | 受限环境下的静态工具 |
+| `sucrack` / `subrute.sh` | su 口令测试（编译版 / Shell 版） |
+| `muban.key` / `generate_by_username.sh` | 按用户名生成候选口令列表 |
+| `reverse.php` | PHP 反弹 shell（pentestmonkey），使用前修改其中的 IP 和端口 |
+
+`generate_by_username.sh` 从当前目录读取 `muban.key`，所以要在 `tools/` 里运行：
+
+```bash
+cd tools
+bash generate_by_username.sh alice > dict.txt
+sh subrute.sh root dict.txt
+```
+
+## 构建与维护
+
+仓库不发布 Release。预编译产物直接提交在各条目的 `bin/`；在 VPS 或本地重新构建并回写：
+
+```bash
+./build/sync-bin.sh gnu
+```
+
+脚本会编译全部条目，只给包含 ELF 产物的条目保留 `bin/`。清单格式和目录文档由 `Check CVE catalog` 工作流校验：
+
+```bash
+python3 .github/scripts/check_catalog.py
+```
 
 ## 免责声明
 
-本工具集仅供授权渗透测试、安全研究及 CTF 竞赛使用。未经授权访问或破坏任何系统均属违法行为，使用者自行承担一切后果。
-
-## Release 下载
-
-在 [Releases](https://github.com/yanxinwu946/ll-privesc-kit/releases) 下载对应版本：
-
-```
-ll-privesc-kit-gnu.zip     glibc 静态编译（x86_64，适配 Debian/Ubuntu/CentOS 等 glibc 系）
-ll-privesc-kit-musl.zip    musl 静态编译（x86_64，适配 Alpine/Artix 等 musl 系）
-```
-
-Release zip 仅包含编译产物与内置工具，不包含 PoC 源码。如需源码请克隆仓库。
-
-结构：
-
-```
-ll-privesc-kit-gnu/
-├── 01dirtycow/dirtyc0w          # 编译产物
-├── 03pwnkit/cve-2021-4034
-├── 03pwnkit/pwnkit.so
-├── ...
-├── tools/                       # 内置工具
-│   ├── linpeas.sh
-│   ├── pspy32 / pspy64 / pspy64s
-│   ├── busybox / socat / strace
-│   └── ...
-```
-
-## 漏洞列表
-
-| # | 目录 | CVE |
-|---|------|-----|
-| 01 | dirtycow | CVE-2016-5195 |
-| 02 | sudo-samedit | CVE-2021-3156 |
-| 03 | pwnkit | CVE-2021-4034 |
-| 04 | dirtypipe | CVE-2022-0847 |
-| 05 | overlayfs | CVE-2023-0386 |
-| 06 | chwoot | CVE-2025-32463 |
-| 07 | pack2theroot | CVE-2026-41651 |
-| 08 | copyfail | CVE-2026-31431 |
-| 09 | dirtyfrag | CVE-2026-43284 / CVE-2026-43500 |
-| 10 | fragnesia | CVE-2026-46300 |
-| 11 | dirty-clone | CVE-2026-43503 |
-| 12 | pedit-cow | CVE-2026-46331 |
-| 13 | ovswrap | CVE-2026-64531 |
-| 14 | sctphantom | CVE-2026-64564 |
-
-每个目录的 README 含完整漏洞信息与用法。详细漏洞清单见 `manifest.json`。
-
-## 本地构建
-
-```bash
-# glibc 静态
-./build/build.sh gnu dist/gnu
-
-# musl 静态（alpine 容器）
-docker run --rm -v "$PWD":/src -w /src alpine:3.20 sh -c \
-  "apk add build-base fuse-dev libcap-dev bash && ./build/build.sh musl dist/musl"
-```
+本项目仅用于授权渗透测试、安全研究和 CTF。内核提权 PoC 可能破坏内核内存或页缓存，请只在一次性虚拟机或明确授权的环境中运行；未经授权使用后果自负。
 
 ## 贡献
 
-新增漏洞、修复错误或改进构建，请参考 `MAINTAIN.md` 中的规范：
+请参阅[贡献指南](CONTRIBUTING.md)和[社区行为准则](CODE_OF_CONDUCT.md)。如果发现本仓库自身的安全问题，请按[安全政策](SECURITY.md)报告。
 
-- 按 CVE 公开时间排序插入目录
-- 提供 `README.md` 与 `build.sh`（见模板）
-- 不改动上游 PoC 源码
-- 更新 `manifest.json` 与根目录 `README.md`
+## 许可证
 
----
-
-Maintained by [yanxinwu946](https://github.com/yanxinwu946)
+项目采用 [MIT 许可证](LICENSE)。第三方文件的许可见各自的上游声明。

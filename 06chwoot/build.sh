@@ -6,5 +6,4 @@ OUT="${1:?usage: build.sh <outdir> [gnu|musl]}"
 cd "$(dirname "$0")"
 mkdir -p "$OUT"
 cp -f chwoot.sh "$OUT/"
-cp -rf chwoot "$OUT/" 2>/dev/null || true
 echo "[06chwoot] -> $OUT/chwoot.sh"
